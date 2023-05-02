@@ -1,0 +1,75 @@
+<svg width="800" height="800" viewBox="0 0 800 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="800" height="800" fill="#1E1E1E"/>
+<rect x="800" y="800" width="100" height="100" transform="rotate(180 800 800)" fill="#D8C9C9"/>
+<rect x="800" y="800" width="100" height="100" transform="rotate(180 800 800)" fill="#D8C9C9"/>
+<rect x="200" y="800" width="100" height="100" transform="rotate(180 200 800)" fill="#D8C9C9"/>
+<rect x="400" y="800" width="100" height="100" transform="rotate(180 400 800)" fill="#D8C9C9"/>
+<rect x="600" y="800" width="100" height="100" transform="rotate(180 600 800)" fill="#D8C9C9"/>
+<rect x="700" y="800" width="100" height="100" transform="rotate(180 700 800)" fill="#752B2B"/>
+<rect x="100" y="800" width="100" height="100" transform="rotate(180 100 800)" fill="#752B2B"/>
+<rect x="300" y="800" width="100" height="100" transform="rotate(180 300 800)" fill="#752B2B"/>
+<rect x="500" y="800" width="100" height="100" transform="rotate(180 500 800)" fill="#752B2B"/>
+<rect x="800" y="600" width="100" height="100" transform="rotate(180 800 600)" fill="#D8C9C9"/>
+<rect x="800" y="600" width="100" height="100" transform="rotate(180 800 600)" fill="#D8C9C9"/>
+<rect x="200" y="600" width="100" height="100" transform="rotate(180 200 600)" fill="#D8C9C9"/>
+<rect x="400" y="600" width="100" height="100" transform="rotate(180 400 600)" fill="#D8C9C9"/>
+<rect x="600" y="600" width="100" height="100" transform="rotate(180 600 600)" fill="#D8C9C9"/>
+<rect x="700" y="600" width="100" height="100" transform="rotate(180 700 600)" fill="#752B2B"/>
+<rect x="100" y="600" width="100" height="100" transform="rotate(180 100 600)" fill="#752B2B"/>
+<rect x="300" y="600" width="100" height="100" transform="rotate(180 300 600)" fill="#752B2B"/>
+<rect x="500" y="600" width="100" height="100" transform="rotate(180 500 600)" fill="#752B2B"/>
+<rect x="800" y="400" width="100" height="100" transform="rotate(180 800 400)" fill="#D8C9C9"/>
+<rect x="800" y="400" width="100" height="100" transform="rotate(180 800 400)" fill="#D8C9C9"/>
+<rect x="200" y="400" width="100" height="100" transform="rotate(180 200 400)" fill="#D8C9C9"/>
+<rect x="400" y="400" width="100" height="100" transform="rotate(180 400 400)" fill="#D8C9C9"/>
+<rect x="600" y="400" width="100" height="100" transform="rotate(180 600 400)" fill="#D8C9C9"/>
+<rect x="700" y="400" width="100" height="100" transform="rotate(180 700 400)" fill="#752B2B"/>
+<rect x="100" y="400" width="100" height="100" transform="rotate(180 100 400)" fill="#752B2B"/>
+<rect x="300" y="400" width="100" height="100" transform="rotate(180 300 400)" fill="#752B2B"/>
+<rect x="500" y="400" width="100" height="100" transform="rotate(180 500 400)" fill="#752B2B"/>
+<rect y="600" width="100" height="100" fill="#D8C9C9"/>
+<rect y="600" width="100" height="100" fill="#D8C9C9"/>
+<rect x="600" y="600" width="100" height="100" fill="#D8C9C9"/>
+<rect x="400" y="600" width="100" height="100" fill="#D8C9C9"/>
+<rect x="200" y="600" width="100" height="100" fill="#D8C9C9"/>
+<rect x="100" y="600" width="100" height="100" fill="#752B2B"/>
+<rect x="700" y="600" width="100" height="100" fill="#752B2B"/>
+<rect x="500" y="600" width="100" height="100" fill="#752B2B"/>
+<rect x="300" y="600" width="100" height="100" fill="#752B2B"/>
+<rect y="400" width="100" height="100" fill="#D8C9C9"/>
+<rect y="400" width="100" height="100" fill="#D8C9C9"/>
+<rect x="600" y="400" width="100" height="100" fill="#D8C9C9"/>
+<rect x="400" y="400" width="100" height="100" fill="#D8C9C9"/>
+<rect x="200" y="400" width="100" height="100" fill="#D8C9C9"/>
+<rect x="100" y="400" width="100" height="100" fill="#752B2B"/>
+<rect x="700" y="400" width="100" height="100" fill="#752B2B"/>
+<rect x="500" y="400" width="100" height="100" fill="#752B2B"/>
+<rect x="300" y="400" width="100" height="100" fill="#752B2B"/>
+<rect y="200" width="100" height="100" fill="#D8C9C9"/>
+<rect y="200" width="100" height="100" fill="#D8C9C9"/>
+<rect x="600" y="200" width="100" height="100" fill="#D8C9C9"/>
+<rect x="400" y="200" width="100" height="100" fill="#D8C9C9"/>
+<rect x="200" y="200" width="100" height="100" fill="#D8C9C9"/>
+<rect x="100" y="200" width="100" height="100" fill="#752B2B"/>
+<rect x="700" y="200" width="100" height="100" fill="#752B2B"/>
+<rect x="500" y="200" width="100" height="100" fill="#752B2B"/>
+<rect x="300" y="200" width="100" height="100" fill="#752B2B"/>
+<rect x="800" y="200" width="100" height="100" transform="rotate(180 800 200)" fill="#D8C9C9"/>
+<rect x="800" y="200" width="100" height="100" transform="rotate(180 800 200)" fill="#D8C9C9"/>
+<rect x="200" y="200" width="100" height="100" transform="rotate(180 200 200)" fill="#D8C9C9"/>
+<rect x="400" y="200" width="100" height="100" transform="rotate(180 400 200)" fill="#D8C9C9"/>
+<rect x="600" y="200" width="100" height="100" transform="rotate(180 600 200)" fill="#D8C9C9"/>
+<rect x="700" y="200" width="100" height="100" transform="rotate(180 700 200)" fill="#752B2B"/>
+<rect x="100" y="200" width="100" height="100" transform="rotate(180 100 200)" fill="#752B2B"/>
+<rect x="300" y="200" width="100" height="100" transform="rotate(180 300 200)" fill="#752B2B"/>
+<rect x="500" y="200" width="100" height="100" transform="rotate(180 500 200)" fill="#752B2B"/>
+<rect width="100" height="100" fill="#D8C9C9"/>
+<rect width="100" height="100" fill="#D8C9C9"/>
+<rect x="600" width="100" height="100" fill="#D8C9C9"/>
+<rect x="400" width="100" height="100" fill="#D8C9C9"/>
+<rect x="200" width="100" height="100" fill="#D8C9C9"/>
+<rect x="100" width="100" height="100" fill="#752B2B"/>
+<rect x="700" width="100" height="100" fill="#752B2B"/>
+<rect x="500" width="100" height="100" fill="#752B2B"/>
+<rect x="300" width="100" height="100" fill="#752B2B"/>
+</svg>
