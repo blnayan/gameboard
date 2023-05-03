@@ -1,6 +1,5 @@
-import Link from "next/link";
-import styles from "./page.module.css";
+import styles from "./page.module.scss";
 
 export default function Home() {
-  return <Link href="/chess">Chess</Link>;
+  return <></>;
 }
