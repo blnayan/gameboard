@@ -14,7 +14,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body className={inter.className}>
         <Link href="/">Home</Link>
-        <Link href="/chess">Chess</Link>
+        <Link href="/tictactoe">TicTacToe</Link>
         {children}
       </body>
     </html>
