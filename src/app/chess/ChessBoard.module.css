@@ -1,0 +1,5 @@
+.board {
+  position: relative;
+  background-image: url("/board/brown.svg");
+  background-size: 100%;
+}

@@ -1,4 +1,7 @@
+import { PieceTrackData, isDigit } from "./Chess";
 import { PieceColorFlags, PieceFlags, PieceTypeFlags, PieceUtil } from "./Piece";
+
+export type FenPieceSymbol = "k" | "p" | "n" | "b" | "r" | "q" | "K" | "P" | "N" | "B" | "R" | "Q";
 
 export interface FenRegExpMatchArray extends RegExpMatchArray {
   groups: {
@@ -28,8 +31,8 @@ export class FenUtil {
     return fenMatches?.groups;
   }
 
-  public static fenSymbolToPiece(symbol: string) {
-    const symbolToPieceType: { [key: string]: PieceTypeFlags | undefined } = {
+  public static fenSymbolToPiece(symbol: FenPieceSymbol) {
+    const symbolToPieceType: { [key: string]: PieceTypeFlags } = {
       k: PieceFlags.King,
       p: PieceFlags.Pawn,
       n: PieceFlags.Knight,
@@ -44,30 +47,21 @@ export class FenUtil {
     return pieceColor | pieceType;
   }
 
-  public static pieceToFenSymbol(piece: number) {
-    const pieceTypeToSymbol: { [P in PieceTypeFlags]: string | null } = {
-      [PieceFlags.None]: null,
-      [PieceFlags.King]: "k",
-      [PieceFlags.Pawn]: "p",
-      [PieceFlags.Knight]: "n",
-      [PieceFlags.Bishop]: "b",
-      [PieceFlags.Rook]: "r",
-      [PieceFlags.Queen]: "q",
-    };
-
-    const symbol = PieceUtil.isColor(piece, PieceFlags.White)
-      ? pieceTypeToSymbol[PieceUtil.getType(piece)]?.toUpperCase()
-      : pieceTypeToSymbol[PieceUtil.getType(piece)];
-
-    return symbol ?? null;
+  public static pieceToFenSymbol(piece: number): FenPieceSymbol | null {
+    return (
+      PieceUtil.isColor(piece, PieceFlags.White)
+        ? PieceUtil.getPieceTypeSymbol(piece)!.toUpperCase()
+        : PieceUtil.getPieceTypeSymbol(piece)
+    ) as FenPieceSymbol | null;
   }
 
   public static generateBoardFromFen(fen: string) {
-    if (!FenUtil.isValidFen(fen)) throw TypeError("Invalid FEN");
+    if (!FenUtil.isValidFen(fen)) throw "Invalid FEN";
 
     const { piecePlacement } = FenUtil.getFenObject(fen);
 
     const board: number[] = new Array(64).fill(0);
+    const pieces: PieceTrackData[] = [];
 
     let file = 0;
     let rank = 0;
@@ -79,15 +73,18 @@ export class FenUtil {
         continue;
       }
 
-      if (!isNaN(parseInt(symbol))) {
+      if (isDigit(symbol)) {
         file += parseInt(symbol);
         continue;
       }
 
-      board[rank * 8 + file] = this.fenSymbolToPiece(symbol);
+      const square = rank * 8 + file;
+      const piece = this.fenSymbolToPiece(symbol as FenPieceSymbol);
+      board[square] = piece;
+      pieces.push({ piece, square });
       file++;
     }
 
-    return board;
+    return { board, pieces };
   }
 }

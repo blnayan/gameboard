@@ -20,14 +20,12 @@ export enum PieceFlags {
 export type PieceColorFlags = Extract<PieceFlags, PieceFlags.White | PieceFlags.Black>;
 export type PieceTypeFlags = Extract<
   PieceFlags,
-  | PieceFlags.King
-  | PieceFlags.Pawn
-  | PieceFlags.Knight
-  | PieceFlags.Bishop
-  | PieceFlags.Rook
-  | PieceFlags.Queen
-  | PieceFlags.None
+  PieceFlags.King | PieceFlags.Pawn | PieceFlags.Knight | PieceFlags.Bishop | PieceFlags.Rook | PieceFlags.Queen
 >;
+
+export type PieceTypeSymbol = "k" | "p" | "n" | "b" | "r" | "q";
+export type PieceColorSymbol = "w" | "b";
+export type PieceSymbol = `${PieceColorSymbol}${PieceTypeSymbol}`;
 
 export class PieceUtil {
   private constructor() {}
@@ -46,5 +44,56 @@ export class PieceUtil {
 
   public static isColor(piece: number, color: PieceColorFlags) {
     return PieceUtil.getColor(piece) === color;
+  }
+
+  public static getPieceTypeSymbol(piece: number) {
+    const pieceTypeToSymbol: { [P in PieceTypeFlags]?: PieceTypeSymbol } = {
+      [PieceFlags.King]: "k",
+      [PieceFlags.Pawn]: "p",
+      [PieceFlags.Knight]: "n",
+      [PieceFlags.Bishop]: "b",
+      [PieceFlags.Rook]: "r",
+      [PieceFlags.Queen]: "q",
+    };
+
+    const symbol = pieceTypeToSymbol[PieceUtil.getType(piece)];
+
+    return symbol ?? null;
+  }
+
+  public static getPieceColorSymbol(piece: number): PieceColorSymbol | null {
+    return PieceUtil.isColor(piece, PieceFlags.White) ? "w" : PieceUtil.isColor(piece, PieceFlags.Black) ? "b" : null;
+  }
+
+  public static getPieceSymbol(piece: number): PieceSymbol | null {
+    const pieceTypeSymbol = PieceUtil.getPieceTypeSymbol(piece);
+    const pieceColorSymbol = PieceUtil.getPieceColorSymbol(piece);
+
+    if (!pieceTypeSymbol || !pieceColorSymbol) return null;
+
+    return `${pieceColorSymbol}${pieceTypeSymbol}`;
+  }
+
+  public static getPieceName(piece: number) {
+    const pieceTypeSymbol = PieceUtil.getPieceTypeSymbol(piece);
+    const pieceColorSymbol = PieceUtil.getPieceColorSymbol(piece);
+
+    if (!pieceTypeSymbol || !pieceColorSymbol) return null;
+
+    const colorName: { [C in PieceColorSymbol]: string } = {
+      w: "White",
+      b: "Black",
+    };
+
+    const typeName: { [T in PieceTypeSymbol]: string } = {
+      k: "King",
+      p: "Pawn",
+      n: "Knight",
+      b: "Bishop",
+      r: "Rook",
+      q: "Queen",
+    };
+
+    return `${colorName[pieceColorSymbol]} ${typeName[pieceTypeSymbol]}`;
   }
 }
