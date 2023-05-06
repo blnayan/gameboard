@@ -4,20 +4,31 @@ export type Player = "X" | "O" | "";
 export type Board = Player[][];
 
 export interface Move {
-  player: Player;
-  row: number;
-  col: number;
+    player: Player;
+    row: number;
+    col: number;
+  }
+  
+
+export enum BotDifficulty {
+  EASY,
+  MEDIUM,
+  HARD,
 }
 
 export class TicTacToe extends EventEmitter {
   private board: Board;
   private currentPlayer: Player;
   private movesCount = 0;
+  private bot?: BotDifficulty;
 
-  constructor() {
+  constructor(botDifficulty?: BotDifficulty) {
     super();
     this.board = this.createEmptyBoard();
     this.currentPlayer = "X";
+    if (botDifficulty !== undefined) {
+      this.bot = botDifficulty;
+    }
   }
 
   private createEmptyBoard(): Board {
@@ -40,8 +51,8 @@ export class TicTacToe extends EventEmitter {
     this.board[row][col] = this.currentPlayer;
     this.emit("move", { player: this.currentPlayer, row, col });
 
-    this.movesCount++; 
-   
+    this.movesCount++;
+
     if (this.isTie()) {
       this.emit("tie");
       return true;
@@ -51,6 +62,9 @@ export class TicTacToe extends EventEmitter {
       this.emit("gameOver", this.currentPlayer);
     } else {
       this.switchPlayer();
+      if (this.bot !== undefined && this.getCurrentPlayer() == "O") {
+        this.makeBotMove();
+      }
     }
 
     return true;
@@ -62,6 +76,93 @@ export class TicTacToe extends EventEmitter {
 
   private switchPlayer(): void {
     this.currentPlayer = this.currentPlayer === "X" ? "O" : "X";
+  }
+
+  public makeBotMove(): void {
+    if (this.bot === BotDifficulty.EASY) {
+      this.makeRandomMove();
+    } else if (this.bot === BotDifficulty.MEDIUM) {
+      if (Math.random() > 0.5) {
+        this.makeRandomMove();
+      } else {
+        this.makeComputedMove();
+      }
+    } else if (this.bot === BotDifficulty.HARD) {
+      this.makeComputedMove();
+    }
+  }
+  
+  private makeComputedMove(): void {
+    const winningMove = this.findWinningMove();
+    if (winningMove) {
+      this.makeMove(winningMove.row, winningMove.col);
+      return;
+    }
+  
+    const blockingMove = this.findBlockingMove();
+    if (blockingMove) {
+      this.makeMove(blockingMove.row, blockingMove.col);
+      return;
+    }
+  
+    this.makeRandomMove();
+  }
+  
+  private findWinningMove(): Move | null {
+    for (let row = 0; row < 3; row++) {
+      for (let col = 0; col < 3; col++) {
+        if (this.board[row][col] === "") {
+          this.board[row][col] = this.currentPlayer;
+          if (this.isGameOver()) {
+            this.board[row][col] = "";
+            return { player: this.currentPlayer, row, col };
+          }
+          this.board[row][col] = "";
+        }
+      }
+    }
+    return null;
+  }
+  
+  private findBlockingMove(): Move | null {
+    const opponent = this.currentPlayer === "X" ? "O" : "X";
+  
+    for (let row = 0; row < 3; row++) {
+      for (let col = 0; col < 3; col++) {
+        if (this.board[row][col] === "") {
+          this.board[row][col] = opponent;
+          if (this.isGameOver()) {
+            this.board[row][col] = "";
+            return { player: this.currentPlayer, row, col };
+          }
+          this.board[row][col] = "";
+        }
+      }
+    }
+    return null;
+  }
+  
+  
+
+  private makeRandomMove(): void {
+    let emptyCells = [];
+
+    for (let row = 0; row < 3; row++) {
+      for (let col = 0; col < 3; col++) {
+        if (this.board[row][col] === "") {
+          emptyCells.push({ row, col });
+        }
+      }
+    }
+
+    if (emptyCells.length === 0) {
+      return;
+    }
+
+    const randomIndex = Math.floor(Math.random() * emptyCells.length);
+    const { row, col } = emptyCells[randomIndex];
+    console.log(row, col)
+    this.makeMove(row, col);
   }
 
   public isGameOver(): boolean {

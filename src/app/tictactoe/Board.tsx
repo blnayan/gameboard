@@ -1,77 +1,93 @@
-import React, { useEffect, useState } from "react";
-import { TicTacToe, Board, Move, Player } from "../../scripts/tictactoe/TicTacToe";
+import React, { CSSProperties, useEffect, useState } from "react";
+import { TicTacToe, Player, BotDifficulty, Move } from "@/scripts/tictactoe/TicTacToe";
 
-const cellStyle = {
-  width: "100px",
-  height: "100px",
-  border: "1px solid black",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  fontSize: "24px",
-};
-
-export const TicTacToeBoard: React.FC = () => {
-  const [game, setGame] = useState<TicTacToe>(new TicTacToe());
-  const [board, setBoard] = useState<Board>(game.getBoard());
-  const [winner, setWinner] = useState<Player | null>(null);
-  const [tie, setTie] = useState<boolean>(false);
-
-  useEffect(() => {
-    const handleMove = (move: Move) => {
-      setBoard(game.getBoard());
-    };
-
-    const handleGameOver = (winner: Player) => {
-      setWinner(winner);
-    };
-
-    const handleTie = () => {
-        setTie(true);
-      };
+export const TicTacToeBoard = () => {
+    const [game, setGame] = useState<TicTacToe | null>(null);
+    const [isPlayingAgainstBot, setIsPlayingAgainstBot] = useState<boolean>(false);
+    const [board, setBoard] = useState<Player[][]>([]);
+    const [botDifficulty, setBotDifficulty] = useState<BotDifficulty>(BotDifficulty.EASY);
   
-    game.on("tie", handleTie);
-    game.on("move", handleMove);
-    game.on("gameOver", handleGameOver);
-
-    return () => {
-      game.off("move", handleMove);
-      game.off("gameOver", handleGameOver);
-      game.off("tie", handleTie);
+    useEffect(() => {
+      if (game) {
+        game.on("move", (move: Move) => {
+            setBoard(game.getBoard());
+        });
+      }
+    }, [game, isPlayingAgainstBot]);
+  
+    const handleClick = (row: number, col: number) => {
+      if (game) {
+        game.makeMove(row, col);
+       
+      }
     };
-  }, [game]);
 
-  const handleClick = (row: number, col: number) => {
-    game.makeMove(row, col);
-  };
-
-  return (
-    <div>
-      <div>
-        {board.map((row, rowIndex) => (
-          <div key={rowIndex} style={{ display: "flex" }}>
-            {row.map((cell, colIndex) => (
-              <div
-                key={colIndex}
-                style={cellStyle}
-                onClick={() => handleClick(rowIndex, colIndex)}
-              >
-                {cell}
+    const handleStartGame = () => {
+        setGame(new TicTacToe(isPlayingAgainstBot ? botDifficulty : undefined));
+      };
+    
+      const renderBoard = () => {
+        if (!game) return null;
+        const board = game.getBoard()
+    
+        const cellStyle: CSSProperties = {
+          width: "50px",
+          height: "50px",
+          border: "1px solid black",
+          textAlign: "center",
+          fontSize: "24px",
+          lineHeight: "50px"
+        };
+    
+        return (
+          <div>
+            {board.map((row, rowIndex) => (
+              <div key={rowIndex} style={{ display: "flex" }}>
+                {row.map((cell, colIndex) => (
+                  <div
+                    key={colIndex}
+                    style={cellStyle}
+                    onClick={() => handleClick(rowIndex, colIndex)}
+                  >
+                    {cell}
+                  </div>
+                ))}
               </div>
             ))}
           </div>
-        ))}
-      </div>
-      {winner && (
+        );
+      };
+    
+      const renderBotSelection = () => {
+        return (
+          <div>
+            <label>
+              Play against bot:
+              <input
+                type="checkbox"
+                checked={isPlayingAgainstBot}
+                onChange={(e) => setIsPlayingAgainstBot(e.target.checked)}
+              />
+            </label>
+            {isPlayingAgainstBot && (
+              <select
+                value={botDifficulty}
+                onChange={(e) => setBotDifficulty(Number(e.target.value) as BotDifficulty)}
+              >
+                <option value={BotDifficulty.EASY}>Easy</option>
+                <option value={BotDifficulty.MEDIUM}>Medium</option>
+                <option value={BotDifficulty.HARD}>Hard</option>
+              </select>
+            )}
+          </div>
+        );
+      };
+    
+      return (
         <div>
-          <h2>{winner} wins!</h2>
+          {renderBotSelection()}
+          <button onClick={handleStartGame}>Start Game</button>
+          {renderBoard()}
         </div>
-      )}
-      {tie && (
-        <div>
-          <h2>It's a tie!</h2>
-        </div>
-      )}
-    </div>
-  );
+      );
 };
