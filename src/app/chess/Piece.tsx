@@ -1,11 +1,12 @@
-import { PieceSymbol, PieceUtil, algebraic, file, rank } from "@/scripts/Chess";
+import { Chess, PieceSymbol, PieceUtil, algebraic, file, rank } from "@/scripts/Chess";
 import Image from "next/image";
-import React, { DragEventHandler, useState } from "react";
+import React, { DragEventHandler, useCallback, useEffect, useState } from "react";
 import styles from "./Piece.module.css";
 
 interface PieceProps {
   piece: number;
   square: number;
+  chess: Chess;
   pieceSize: number;
 }
 
@@ -19,14 +20,7 @@ function inBetween(x: number, a: number, b: number) {
   return x >= a && x <= b;
 }
 
-function isPieceInChessBoard(square: number, translate: DragState["translate"], pieceSize: number) {
-  return (
-    inBetween(file(square) + Math.round(translate.x / pieceSize), 0, 7) &&
-    inBetween(rank(square) + Math.round(translate.y / pieceSize), 0, 7)
-  );
-}
-
-export function Piece({ piece, square, pieceSize }: PieceProps) {
+export function Piece({ piece, square, chess, pieceSize }: PieceProps) {
   const [dragState, setDragState] = useState<DragState>({
     translate: { x: 0, y: 0 },
     scroll: { x: 0, y: 0 },
@@ -34,6 +28,38 @@ export function Piece({ piece, square, pieceSize }: PieceProps) {
   });
 
   const { translate, scroll, dragging } = dragState;
+
+  const [moved, setMoved] = useState(false);
+
+  const movedEffect = useCallback(() => {
+    if (!moved) return;
+
+    const offsetFile = file(square) + Math.round(translate.x / pieceSize);
+    const offsetRank = rank(square) + Math.round(translate.y / pieceSize);
+
+    if (!(inBetween(offsetFile, 0, 7) && inBetween(offsetRank, 0, 7))) return resetStates();
+
+    const translatedSquare = offsetRank * 8 + offsetFile;
+
+    if (square === translatedSquare) return resetStates();
+
+    chess.remove(square);
+    chess.put(piece, translatedSquare);
+  }, [moved, translate, square, pieceSize, chess, piece]);
+
+  useEffect(() => {
+    movedEffect();
+  }, [movedEffect]);
+
+  function resetStates() {
+    setDragState({
+      translate: { x: 0, y: 0 },
+      scroll: { x: 0, y: 0 },
+      dragging: false,
+    });
+
+    setMoved(false);
+  }
 
   function mountDraggingListeners() {
     window.addEventListener("mousemove", handleMouseMove);
@@ -78,14 +104,15 @@ export function Piece({ piece, square, pieceSize }: PieceProps) {
   function handleMouseUp(event: MouseEvent) {
     event.preventDefault();
     unmountDraggingListeners();
+
     setDragState((prevState) => {
-      // * Logic of figuring out where the piece get's dropped is not right
-      console.log(isPieceInChessBoard(square, prevState.translate, pieceSize));
       return {
         ...prevState,
         dragging: false,
       };
     });
+
+    setMoved(true);
   }
 
   function handleScroll() {
@@ -103,28 +130,27 @@ export function Piece({ piece, square, pieceSize }: PieceProps) {
   function handleBlur(event: FocusEvent) {
     event.preventDefault();
     unmountDraggingListeners();
-    setDragState((prevState) => {
-      return {
-        ...prevState,
-        dragging: false,
-      };
-    });
+    setDragState(dragState);
   }
 
   return (
     <div
       style={{
-        height: pieceSize,
-        width: pieceSize,
         transform: `translate(${translate.x}px, ${translate.y}px)`,
       }}
       // prettier-ignore
       className={[
         styles[algebraic(square)], 
-        styles.piece, 
-        styles[PieceUtil.getPieceSymbol(piece) as PieceSymbol]
+        styles.piece,
       ].join(" ")}
       onMouseDown={handleMouseDown}
-    />
+    >
+      <Image
+        src={`/piece/cburnett/${PieceUtil.getPieceSymbol(piece) as PieceSymbol}.svg`}
+        alt={PieceUtil.getPieceName(piece) as string}
+        height={pieceSize}
+        width={pieceSize}
+      />
+    </div>
   );
 }

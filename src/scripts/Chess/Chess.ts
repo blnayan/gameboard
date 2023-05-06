@@ -1,3 +1,5 @@
+// TODO: Change square indexing from octals to hexadecimal to compute square validation with just the square index
+
 import { EventEmitter } from "events";
 import { FenUtil } from "./Fen";
 import { PieceColorFlags, PieceColorSymbol, PieceFlags, PieceSymbol, PieceTypeSymbol, PieceUtil } from "./Piece";
@@ -13,10 +15,6 @@ export interface PieceTrackData {
 
 export function isDigit(char: string) {
   return "0123456789".split("").includes(char);
-}
-
-export function validSquare(square: number) {
-  return square >> 6 ? false : true;
 }
 
 export function file(square: number) {
@@ -90,8 +88,6 @@ export class Chess extends EventEmitter {
   }
 
   public put(piece: number, square: number): PieceTrackData {
-    if (!validSquare(square)) throw "Invalid Square";
-
     this.remove(square, true);
     this._board[square] = piece;
     this._pieces.push({ piece, square });
@@ -102,8 +98,6 @@ export class Chess extends EventEmitter {
   }
 
   public remove(square: number, ignorePiecesUpdate?: boolean): PieceTrackData | void {
-    if (!validSquare(square)) throw "Invalid Square";
-
     const piece = this._board[square];
     this._board[square] = 0;
 
@@ -148,8 +142,17 @@ export declare interface Chess {
     listener: (...args: any[]) => Awaitable<void>
   ): this;
 
+  removeListener<K extends keyof ChessEvents>(event: K, listener: (...args: ChessEvents[K]) => Awaitable<void>): this;
+  removeListener<S extends string | symbol>(
+    event: Exclude<S, keyof ChessEvents>,
+    listener: (...args: any[]) => Awaitable<void>
+  ): this;
+
   removeAllListeners<K extends keyof ChessEvents>(event?: K): this;
   removeAllListeners<S extends string | symbol>(event?: Exclude<S, keyof ChessEvents>): this;
+
+  listeners<K extends keyof ChessEvents>(event?: K): Function[];
+  listeners<S extends string | symbol>(event?: Exclude<S, keyof ChessEvents>): Function[];
 }
 
 declare module "node:events" {
