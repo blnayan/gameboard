@@ -12,7 +12,7 @@ export interface BoardState {
 }
 
 export function ChessBoard() {
-  const [chess, setChess] = useState<Chess | null>(null);
+  const [chess] = useState(new Chess());
   const [boardState, setBoardState] = useState<BoardState>({
     boardSize: 600,
     boardStyle: "brown",
@@ -22,26 +22,19 @@ export function ChessBoard() {
   const { boardSize, boardStyle, pieces } = boardState;
 
   const renderPieces = useCallback(() => {
-    if (!chess) return null;
-
     return pieces.map(({ piece, square }) => {
       return <Piece piece={piece} square={square} chess={chess} pieceSize={boardSize / 8} key={square} />;
     });
   }, [chess, pieces, boardSize]);
 
   useEffect(() => {
-    if (chess) {
-      setBoardState((prevState) => ({ ...prevState, pieces: chess.pieces() }));
-      chess.removeAllListeners("piecesUpdate");
-      chess.on("piecesUpdate", (pieces) => {
-        setBoardState((prevState) => ({ ...prevState, pieces }));
-        chess.logBoard();
-      });
-      console.log(chess.listeners("piecesUpdate").length);
-    }
+    setBoardState((prevState) => ({ ...prevState, pieces: chess.pieces() }));
+    chess.removeAllListeners("piecesUpdate");
+    chess.on("piecesUpdate", (pieces) => {
+      setBoardState((prevState) => ({ ...prevState, pieces }));
+      chess.logBoard();
+    });
   }, [chess]);
-
-  if (!chess) setChess(new Chess());
 
   return (
     <div style={{ height: boardSize, width: boardSize }} className={styles.board}>

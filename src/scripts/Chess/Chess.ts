@@ -47,7 +47,7 @@ export class Chess extends EventEmitter {
     return [...this._board];
   }
 
-  private readonly _pieces: PieceTrackData[] = [];
+  public readonly _pieces: PieceTrackData[] = [];
 
   public pieces() {
     return [...this._pieces];

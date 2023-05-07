@@ -2,6 +2,11 @@
   background-size: 100%;
   z-index: 1;
   position: absolute;
+  cursor: grab;
+}
+
+.dragging {
+  cursor: grabbing;
 }
 
 .piece.wk {

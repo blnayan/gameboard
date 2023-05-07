@@ -27,7 +27,7 @@ export function Piece({ piece, square, chess, pieceSize }: PieceProps) {
     dragging: false,
   });
 
-  const { translate, scroll, dragging } = dragState;
+  const { translate, dragging } = dragState;
 
   const [moved, setMoved] = useState(false);
 
@@ -77,9 +77,13 @@ export function Piece({ piece, square, chess, pieceSize }: PieceProps) {
 
   function handleMouseDown(event: React.MouseEvent<HTMLDivElement>) {
     event.preventDefault();
+
     if (event.button !== 0) return;
+
     mountDraggingListeners();
+
     const { scrollX, scrollY } = window;
+
     setDragState((prevState) => {
       return {
         ...prevState,
@@ -95,6 +99,7 @@ export function Piece({ piece, square, chess, pieceSize }: PieceProps) {
 
   function handleMouseMove(event: MouseEvent) {
     event.preventDefault();
+
     setDragState((prevState) => ({
       ...prevState,
       translate: { x: prevState.translate.x + event.movementX, y: prevState.translate.y + event.movementY },
@@ -140,8 +145,9 @@ export function Piece({ piece, square, chess, pieceSize }: PieceProps) {
       }}
       // prettier-ignore
       className={[
-        styles[algebraic(square)], 
         styles.piece,
+        styles[algebraic(square)], 
+        dragging && styles.dragging
       ].join(" ")}
       onMouseDown={handleMouseDown}
     >
