@@ -95,7 +95,7 @@ export class Chess extends EventEmitter {
   }
 
   private _remove(square: number) {
-    const piece = this._board[square];
+    const piece = this.getPiece(square);
     this._board[square] = 0;
 
     if (piece)
