@@ -87,40 +87,49 @@ export class Chess extends EventEmitter {
     this._pieces.push(...pieces);
   }
 
-  public put(piece: number, square: number): PieceTrackData {
-    this.remove(square, true);
+  private _put(piece: number, square: number) {
+    this._remove(square);
     this._board[square] = piece;
     this._pieces.push({ piece, square });
-    this.emit("pieceAdd", piece, square);
-    this.emit("piecesUpdate", this.pieces());
+    return { piece, square };
+  }
+
+  private _remove(square: number) {
+    const piece = this._board[square];
+    this._board[square] = 0;
+
+    if (piece)
+      this._pieces.splice(
+        this._pieces.findIndex((data) => data.piece === piece && data.square === square),
+        1
+      );
 
     return { piece, square };
   }
 
-  public remove(square: number, ignorePiecesUpdate?: boolean): PieceTrackData | void {
-    const piece = this._board[square];
-    this._board[square] = 0;
+  public put(piece: number, square: number): PieceTrackData {
+    const data = this._put(piece, square);
+    this.emit("pieceAdd", data);
+    this.emit("piecesUpdate", this.pieces());
+    return data;
+  }
 
-    if (piece) {
-      const pieceTrackDataIndex = this._pieces.findIndex((data) => data.piece === piece && data.square === square);
-      this._pieces.splice(pieceTrackDataIndex, 1);
-      this.emit("pieceRemove", piece, square);
-      if (!ignorePiecesUpdate) this.emit("piecesUpdate", this.pieces());
-      return { piece, square };
-    }
+  public remove(square: number): PieceTrackData {
+    const data = this._remove(square);
+    this.emit("pieceRemove", data);
+    this.emit("piecesUpdate", this.pieces());
+    return data;
   }
 }
 
 export interface ChessEvents {
-  pieceAdd: [piece: number, square: number];
-  pieceRemove: [piece: number, square: number];
+  pieceAdd: [data: PieceTrackData];
+  pieceRemove: [data: PieceTrackData];
   boardUpdate: [board: number[]];
   piecesUpdate: [pieces: PieceTrackData[]];
 }
 
 export declare interface Chess {
-  remove(square: number): PieceTrackData | void;
-
   on<K extends keyof ChessEvents>(event: K, listener: (...args: ChessEvents[K]) => Awaitable<void>): this;
   on<S extends string | symbol>(
     event: Exclude<S, keyof ChessEvents>,
