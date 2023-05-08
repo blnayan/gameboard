@@ -1,6 +1,15 @@
-import { Chess, PieceSymbol, PieceUtil, algebraic, file, rank } from "@/scripts/Chess";
+import {
+  Chess,
+  PieceSymbol,
+  algebraic,
+  file,
+  getPieceName,
+  getPieceSymbol,
+  isValidSquare,
+  rank,
+} from "@/scripts/Chess";
 import Image from "next/image";
-import React, { DragEventHandler, useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import styles from "./Piece.module.css";
 
 interface PieceProps {
@@ -36,12 +45,9 @@ export function Piece({ piece, square, chess, pieceSize }: PieceProps) {
 
     const offsetFile = file(square) + Math.round(translate.x / pieceSize);
     const offsetRank = rank(square) + Math.round(translate.y / pieceSize);
+    const translatedSquare = offsetRank * 16 + offsetFile;
 
-    if (!(inBetween(offsetFile, 0, 7) && inBetween(offsetRank, 0, 7))) return resetStates();
-
-    const translatedSquare = offsetRank * 8 + offsetFile;
-
-    if (square === translatedSquare) return resetStates();
+    if (!isValidSquare(translatedSquare) || square === translatedSquare) return resetStates();
 
     chess.remove(square);
     chess.put(piece, translatedSquare);
@@ -61,14 +67,14 @@ export function Piece({ piece, square, chess, pieceSize }: PieceProps) {
     setMoved(false);
   }
 
-  function mountDraggingListeners() {
+  function addDraggingListeners() {
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseup", handleMouseUp);
     window.addEventListener("scroll", handleScroll);
     window.addEventListener("blur", handleBlur);
   }
 
-  function unmountDraggingListeners() {
+  function removeDraggingListeners() {
     window.removeEventListener("mousemove", handleMouseMove);
     window.removeEventListener("mouseup", handleMouseUp);
     window.removeEventListener("scroll", handleScroll);
@@ -80,7 +86,7 @@ export function Piece({ piece, square, chess, pieceSize }: PieceProps) {
 
     if (event.button !== 0) return;
 
-    mountDraggingListeners();
+    addDraggingListeners();
 
     const { scrollX, scrollY } = window;
 
@@ -108,7 +114,7 @@ export function Piece({ piece, square, chess, pieceSize }: PieceProps) {
 
   function handleMouseUp(event: MouseEvent) {
     event.preventDefault();
-    unmountDraggingListeners();
+    removeDraggingListeners();
 
     setDragState((prevState) => {
       return {
@@ -134,7 +140,7 @@ export function Piece({ piece, square, chess, pieceSize }: PieceProps) {
 
   function handleBlur(event: FocusEvent) {
     event.preventDefault();
-    unmountDraggingListeners();
+    removeDraggingListeners();
     setDragState(dragState);
   }
 
@@ -152,10 +158,11 @@ export function Piece({ piece, square, chess, pieceSize }: PieceProps) {
       onMouseDown={handleMouseDown}
     >
       <Image
-        src={`/piece/cburnett/${PieceUtil.getPieceSymbol(piece) as PieceSymbol}.svg`}
-        alt={PieceUtil.getPieceName(piece) as string}
+        src={`/piece/cburnett/${getPieceSymbol(piece) as PieceSymbol}.svg`}
+        alt={getPieceName(piece) as string}
         height={pieceSize}
         width={pieceSize}
+        draggable={false}
       />
     </div>
   );

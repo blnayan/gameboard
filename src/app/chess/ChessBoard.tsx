@@ -3,7 +3,6 @@ import Image from "next/image";
 import { Chess, PieceTrackData } from "@/scripts/Chess";
 import styles from "./ChessBoard.module.css";
 import { Piece } from "./Piece";
-import EventEmitter from "events";
 
 export interface BoardState {
   boardSize: number;
@@ -43,6 +42,7 @@ export function ChessBoard() {
         alt={`${boardStyle.charAt(0).toUpperCase()}${boardStyle.slice(1)} Chess Board`}
         height={boardSize}
         width={boardSize}
+        draggable={false}
         priority
       />
       {renderPieces()}
