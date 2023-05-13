@@ -195,7 +195,7 @@ export function Piece({ piece, square, chess, pieceSize, pieceStyle }: PieceProp
         className={[
           styles.piece,
           styles[algebraic(square)], 
-          dragging && styles.dragging
+          (dragging || moved) && styles.dragging
         ].join(" ")}
         onMouseDown={handleMouseDown}
       >
