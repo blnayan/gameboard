@@ -10,54 +10,6 @@
   cursor: grabbing;
 }
 
-.piece.wk {
-  background-image: url("/piece/cburnett/wk.svg");
-}
-
-.piece.wp {
-  background-image: url("/piece/cburnett/wp.svg");
-}
-
-.piece.wn {
-  background-image: url("/piece/cburnett/wn.svg");
-}
-
-.piece.wb {
-  background-image: url("/piece/cburnett/wb.svg");
-}
-
-.piece.wr {
-  background-image: url("/piece/cburnett/wr.svg");
-}
-
-.piece.wq {
-  background-image: url("/piece/cburnett/wq.svg");
-}
-
-.piece.bk {
-  background-image: url("/piece/cburnett/bk.svg");
-}
-
-.piece.bp {
-  background-image: url("/piece/cburnett/bp.svg");
-}
-
-.piece.bn {
-  background-image: url("/piece/cburnett/bn.svg");
-}
-
-.piece.bb {
-  background-image: url("/piece/cburnett/bb.svg");
-}
-
-.piece.br {
-  background-image: url("/piece/cburnett/br.svg");
-}
-
-.piece.bq {
-  background-image: url("/piece/cburnett/bq.svg");
-}
-
 .piece.a8 {
   top: 0%;
   left: 0%;
