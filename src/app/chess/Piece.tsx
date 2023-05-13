@@ -19,6 +19,7 @@ import styles from "./Piece.module.css";
 import { BoardState } from "./ChessBoard";
 import LegalMoves from "./LegalMoves";
 import PromotionModal from "./PromotionModal";
+import { getBasePath } from "@/scripts";
 
 export interface PieceProps {
   piece: number;
@@ -200,7 +201,7 @@ export function Piece({ piece, square, chess, pieceSize, pieceStyle }: PieceProp
         onMouseDown={handleMouseDown}
       >
         <Image
-          src={`${process.env.BASE_PATH ?? ""}/piece/${pieceStyle}/${getPieceSymbol(piece) as PieceSymbol}.svg`}
+          src={`${getBasePath()}/piece/${pieceStyle}/${getPieceSymbol(piece) as PieceSymbol}.svg`}
           alt={getPieceName(piece) as string}
           height={pieceSize}
           width={pieceSize}

@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Chess, PieceTrackData } from "@/scripts/Chess";
 import styles from "./ChessBoard.module.css";
 import { Piece } from "./Piece";
+import { getBasePath } from "@/scripts";
 
 export interface BoardState {
   boardSize: number;
@@ -58,7 +59,7 @@ export function ChessBoard() {
     <>
       <div style={{ height: boardSize, width: boardSize }} className={styles.board}>
         <Image
-          src={`${process.env.BASE_PATH ?? ""}/board/${boardStyle}.svg`}
+          src={`${getBasePath()}/board/${boardStyle}.svg`}
           alt={`${boardStyle.charAt(0).toUpperCase()}${boardStyle.slice(1)} Chess Board`}
           height={boardSize}
           width={boardSize}

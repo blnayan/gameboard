@@ -5,6 +5,7 @@ import Image from "next/image";
 import { BoardState } from "./ChessBoard";
 import { getPieceName, getPieceSymbol, isPieceType } from "../../scripts/Chess/Piece";
 import { useEffect, useRef } from "react";
+import { getBasePath } from "@/scripts";
 
 export interface PromotionModalProps {
   square: number;
@@ -63,7 +64,7 @@ export default function PromotionModal({
             onMouseDown={() => setPieceState((prevState) => ({ ...prevState, promotionPiece }))}
           >
             <Image
-              src={`${process.env.BASE_PATH ?? ""}/piece/${pieceStyle}/${getPieceSymbol(promotionPiece)}.svg`}
+              src={`${getBasePath()}/piece/${pieceStyle}/${getPieceSymbol(promotionPiece)}.svg`}
               alt={getPieceName(promotionPiece) as string}
               height={pieceSize}
               width={pieceSize}
