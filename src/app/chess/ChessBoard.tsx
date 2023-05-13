@@ -59,6 +59,7 @@ export function ChessBoard() {
     <>
       <div style={{ height: boardSize, width: boardSize }} className={styles.board}>
         <Image
+          className={styles.boardImage}
           src={`${getBasePath()}/board/${boardStyle}.svg`}
           alt={`${boardStyle.charAt(0).toUpperCase()}${boardStyle.slice(1)} Chess Board`}
           height={boardSize}
