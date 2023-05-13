@@ -4,6 +4,7 @@ const nextConfig = {
   reactStrictMode: true,
   trailingSlash: true,
   basePath: process.env.BASE_PATH,
+  publicRuntimeConfig: { basePath: process.env.BASE_PATH ?? "" },
   experimental: {
     appDir: true,
   },
