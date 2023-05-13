@@ -1,7 +1,11 @@
 .legalMove {
-  background-color: rgba(22, 201, 6, 0.5);
-  z-index: 2;
+  background-color: rgba(22, 201, 6, 0.4);
+  z-index: 5;
   position: absolute;
+}
+
+.legalMove.capture {
+  background-color: rgba(255, 255, 3, 0.45);
 }
 
 .legalMove.a8 {

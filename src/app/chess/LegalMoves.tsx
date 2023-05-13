@@ -13,7 +13,7 @@ export default function LegalMoves({ legalMoves, pieceSize }: LegalMovesProps) {
         return (
           <div
             style={{ height: pieceSize, width: pieceSize }}
-            className={[styles.legalMove, styles[algebraic(move.to)]].join(" ")}
+            className={`${styles.legalMove} ${styles[algebraic(move.to)]} ${move.captured ? styles.capture : ""}`}
             key={i}
           />
         );
