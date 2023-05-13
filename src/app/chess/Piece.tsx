@@ -1,70 +1,106 @@
 import {
   Chess,
+  Move,
+  PieceFlags,
   PieceSymbol,
   algebraic,
   file,
   getPieceName,
   getPieceSymbol,
+  isPieceColor,
+  isPieceType,
+  isPromotionSquare,
   isValidSquare,
   rank,
 } from "@/scripts/Chess";
 import Image from "next/image";
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import styles from "./Piece.module.css";
+import { BoardState } from "./ChessBoard";
+import LegalMoves from "./LegalMoves";
+import PromotionModal from "./PromotionModal";
 
-interface PieceProps {
+export interface PieceProps {
   piece: number;
   square: number;
   chess: Chess;
   pieceSize: number;
+  pieceStyle: BoardState["pieceStyle"];
 }
 
-interface DragState {
+export interface DragState {
   translate: { x: number; y: number };
   scroll: { x: number; y: number };
   dragging: boolean;
+  moved: boolean;
 }
 
-function inBetween(x: number, a: number, b: number) {
-  return x >= a && x <= b;
+export interface PieceState {
+  legalMoves: Move[];
+  promotionPiece: number | null;
+  promoting: boolean;
+  promotionSquare: number | null;
 }
 
-export function Piece({ piece, square, chess, pieceSize }: PieceProps) {
+export function Piece({ piece, square, chess, pieceSize, pieceStyle }: PieceProps) {
   const [dragState, setDragState] = useState<DragState>({
     translate: { x: 0, y: 0 },
     scroll: { x: 0, y: 0 },
     dragging: false,
+    moved: false,
   });
 
-  const { translate, dragging } = dragState;
+  const { translate, dragging, moved } = dragState;
 
-  const [moved, setMoved] = useState(false);
+  const [pieceState, setPieceState] = useState<PieceState>({
+    legalMoves: [],
+    promotionPiece: null,
+    promoting: false,
+    promotionSquare: null,
+  });
+
+  const { legalMoves, promotionPiece, promoting, promotionSquare } = pieceState;
 
   const movedEffect = useCallback(() => {
     if (!moved) return;
 
-    const offsetFile = file(square) + Math.round(translate.x / pieceSize);
-    const offsetRank = rank(square) + Math.round(translate.y / pieceSize);
-    const translatedSquare = offsetRank * 16 + offsetFile;
+    const toFile = file(square) + Math.round(translate.x / pieceSize);
+    const toRank = rank(square) + Math.round(translate.y / pieceSize);
+    const toSquare = toRank * 16 + toFile;
 
-    if (!isValidSquare(translatedSquare) || square === translatedSquare) return resetStates();
+    if (!isValidSquare(toSquare) || square === toSquare) return resetDragState();
 
-    chess.remove(square);
-    chess.put(piece, translatedSquare);
-  }, [moved, translate, square, pieceSize, chess, piece]);
+    if (!legalMoves.find((move) => move.from === square && move.to === toSquare)) return resetDragState();
+
+    if (isPromotionSquare(toSquare) && isPieceType(piece, PieceFlags.Pawn) && !promotionPiece) {
+      setPieceState((prevState) => ({ ...prevState, promoting: true, promotionSquare: toSquare }));
+      return resetDragState();
+    }
+
+    try {
+      chess.move({ from: square, to: toSquare });
+    } catch {
+      return resetDragState();
+    }
+  }, [moved, square, legalMoves, translate, pieceSize, piece, promotionPiece, chess]);
+
+  const promotionEffect = useCallback(() => {
+    if (!promotionPiece || promotionSquare === null) return;
+    chess.move({ from: square, to: promotionSquare, promotion: promotionPiece });
+  }, [promotionPiece, promotionSquare, chess, square]);
 
   useEffect(() => {
     movedEffect();
-  }, [movedEffect]);
+    promotionEffect();
+  }, [movedEffect, promotionEffect]);
 
-  function resetStates() {
+  function resetDragState() {
     setDragState({
       translate: { x: 0, y: 0 },
       scroll: { x: 0, y: 0 },
       dragging: false,
+      moved: false,
     });
-
-    setMoved(false);
   }
 
   function addDraggingListeners() {
@@ -85,22 +121,26 @@ export function Piece({ piece, square, chess, pieceSize }: PieceProps) {
     event.preventDefault();
 
     if (event.button !== 0) return;
+    if (!isPieceColor(piece, chess.turn)) return;
 
     addDraggingListeners();
 
     const { scrollX, scrollY } = window;
 
-    setDragState((prevState) => {
-      return {
-        ...prevState,
-        translate: {
-          x: event.nativeEvent.offsetX - pieceSize / 2 + prevState.translate.x,
-          y: event.nativeEvent.offsetY - pieceSize / 2 + prevState.translate.y,
-        },
-        scroll: { x: scrollX, y: scrollY },
-        dragging: true,
-      };
-    });
+    setDragState((prevState) => ({
+      ...prevState,
+      translate: {
+        x: event.nativeEvent.offsetX - pieceSize / 2 + prevState.translate.x,
+        y: event.nativeEvent.offsetY - pieceSize / 2 + prevState.translate.y,
+      },
+      scroll: { x: scrollX, y: scrollY },
+      dragging: true,
+    }));
+
+    setPieceState((prevState) => ({
+      ...prevState,
+      legalMoves: chess.generateLegalMoves(square),
+    }));
   }
 
   function handleMouseMove(event: MouseEvent) {
@@ -120,10 +160,9 @@ export function Piece({ piece, square, chess, pieceSize }: PieceProps) {
       return {
         ...prevState,
         dragging: false,
+        moved: true,
       };
     });
-
-    setMoved(true);
   }
 
   function handleScroll() {
@@ -145,25 +184,40 @@ export function Piece({ piece, square, chess, pieceSize }: PieceProps) {
   }
 
   return (
-    <div
-      style={{
-        transform: `translate(${translate.x}px, ${translate.y}px)`,
-      }}
-      // prettier-ignore
-      className={[
-        styles.piece,
-        styles[algebraic(square)], 
-        dragging && styles.dragging
-      ].join(" ")}
-      onMouseDown={handleMouseDown}
-    >
-      <Image
-        src={`/piece/cburnett/${getPieceSymbol(piece) as PieceSymbol}.svg`}
-        alt={getPieceName(piece) as string}
-        height={pieceSize}
-        width={pieceSize}
-        draggable={false}
-      />
-    </div>
+    <>
+      <div
+        style={{
+          height: pieceSize,
+          width: pieceSize,
+          transform: `translate(${translate.x}px, ${translate.y}px)`,
+        }}
+        // prettier-ignore
+        className={[
+          styles.piece,
+          styles[algebraic(square)], 
+          dragging && styles.dragging
+        ].join(" ")}
+        onMouseDown={handleMouseDown}
+      >
+        <Image
+          src={`/piece/${pieceStyle}/${getPieceSymbol(piece) as PieceSymbol}.svg`}
+          alt={getPieceName(piece) as string}
+          height={pieceSize}
+          width={pieceSize}
+          draggable={false}
+        />
+      </div>
+      {dragging ? <LegalMoves legalMoves={legalMoves} pieceSize={pieceSize} /> : null}
+      {isPieceType(piece, PieceFlags.Pawn) ? (
+        <PromotionModal
+          square={promotionSquare as number}
+          piece={piece}
+          promoting={promoting}
+          setPieceState={setPieceState}
+          pieceSize={pieceSize}
+          pieceStyle={pieceStyle}
+        />
+      ) : null}
+    </>
   );
 }

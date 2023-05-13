@@ -16,20 +16,35 @@ export enum PieceFlags {
   ColorMask = 0b11000000,
 }
 
-export type PieceColorFlags = Extract<PieceFlags, PieceFlags.White | PieceFlags.Black>;
-export type PieceTypeFlags = Extract<
-  PieceFlags,
-  PieceFlags.King | PieceFlags.Pawn | PieceFlags.Knight | PieceFlags.Bishop | PieceFlags.Rook | PieceFlags.Queen
->;
+export type PieceColorFlags = PieceFlags.White | PieceFlags.Black;
+export type PieceTypeFlags =
+  | PieceFlags.King
+  | PieceFlags.Pawn
+  | PieceFlags.Knight
+  | PieceFlags.Bishop
+  | PieceFlags.Rook
+  | PieceFlags.Queen;
+export type SlidingPieceTypeFlags = PieceFlags.Bishop | PieceFlags.Rook | PieceFlags.Queen;
+export type PromotionPieceTypeFlags = PieceFlags.Knight | PieceFlags.Bishop | PieceFlags.Rook | PieceFlags.Queen;
 
 export type PieceTypeSymbol = "k" | "p" | "n" | "b" | "r" | "q";
 export type PieceColorSymbol = "w" | "b";
 export type PieceSymbol = `${PieceColorSymbol}${PieceTypeSymbol}`;
 
-export const pieceList = [65, 66, 68, 72, 80, 96, 129, 130, 132, 136, 144, 160];
-
 export function isValidPiece(piece: number) {
-  return pieceList.includes(piece);
+  return [65, 66, 68, 72, 80, 96, 129, 130, 132, 136, 144, 160].includes(piece);
+}
+
+export function isValidPieceColor(color: number) {
+  return [64, 128].includes(color);
+}
+
+export function isValidPieceType(type: number) {
+  return [1, 2, 4, 8, 16, 32].includes(type);
+}
+
+export function isValidPromotionPiece(piece: number) {
+  return [4, 8, 16, 32].includes(getPieceType(piece));
 }
 
 export function getPieceType(piece: number): PieceTypeFlags {

@@ -1,0 +1,96 @@
+.promotionModal {
+  position: absolute;
+  background-color: whitesmoke;
+  padding: 0;
+  border: none;
+  margin: 0;
+  z-index: 20;
+  border-radius: 5px;
+  overflow: hidden;
+  box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.5);
+}
+
+.promotionPiece {
+  position: absolute;
+  cursor: pointer;
+}
+
+.promotionModal.a8 {
+  top: 0%;
+  left: 0%;
+}
+
+.promotionModal.b8 {
+  top: 0%;
+  left: 12.5%;
+}
+
+.promotionModal.c8 {
+  top: 0%;
+  left: 25%;
+}
+
+.promotionModal.d8 {
+  top: 0%;
+  left: 37.5%;
+}
+
+.promotionModal.e8 {
+  top: 0%;
+  left: 50%;
+}
+
+.promotionModal.f8 {
+  top: 0%;
+  left: 62.5%;
+}
+
+.promotionModal.g8 {
+  top: 0%;
+  left: 75%;
+}
+
+.promotionModal.h8 {
+  top: 0%;
+  left: 87.5%;
+}
+
+.promotionModal.a1 {
+  bottom: 0%;
+  left: 0%;
+}
+
+.promotionModal.b1 {
+  bottom: 0%;
+  left: 12.5%;
+}
+
+.promotionModal.c1 {
+  bottom: 0%;
+  left: 25%;
+}
+
+.promotionModal.d1 {
+  bottom: 0%;
+  left: 37.5%;
+}
+
+.promotionModal.e1 {
+  bottom: 0%;
+  left: 50%;
+}
+
+.promotionModal.f1 {
+  bottom: 0%;
+  left: 62.5%;
+}
+
+.promotionModal.g1 {
+  bottom: 0%;
+  left: 75%;
+}
+
+.promotionModal.h1 {
+  bottom: 0%;
+  left: 87.5%;
+}
