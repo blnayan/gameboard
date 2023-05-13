@@ -2,8 +2,7 @@
 const nextConfig = {
   output: "export",
   reactStrictMode: true,
-  basePath: "/gameboard",
-  assetPrefix: "/gameboard/",
+  basePath: process.env.GITHUB ? "/gameboard" : undefined,
   experimental: {
     appDir: true,
   },
