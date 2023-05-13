@@ -200,7 +200,7 @@ export function Piece({ piece, square, chess, pieceSize, pieceStyle }: PieceProp
         onMouseDown={handleMouseDown}
       >
         <Image
-          src={`/piece/${pieceStyle}/${getPieceSymbol(piece) as PieceSymbol}.svg`}
+          src={`${process.env.BASE_PATH ?? ""}/piece/${pieceStyle}/${getPieceSymbol(piece) as PieceSymbol}.svg`}
           alt={getPieceName(piece) as string}
           height={pieceSize}
           width={pieceSize}

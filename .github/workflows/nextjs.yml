@@ -31,10 +31,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Add GITHUB environment variable
+      - name: Add BASE_PATH
         run: |
           touch .env
-          echo GITHUB=true >> .env
+          echo BASE_PATH=/gameboard >> .env
       - name: Detect package manager
         id: detect-package-manager
         run: |

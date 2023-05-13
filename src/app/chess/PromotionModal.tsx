@@ -63,7 +63,7 @@ export default function PromotionModal({
             onMouseDown={() => setPieceState((prevState) => ({ ...prevState, promotionPiece }))}
           >
             <Image
-              src={`/piece/${pieceStyle}/${getPieceSymbol(promotionPiece)}.svg`}
+              src={`${process.env.BASE_PATH ?? ""}/piece/${pieceStyle}/${getPieceSymbol(promotionPiece)}.svg`}
               alt={getPieceName(promotionPiece) as string}
               height={pieceSize}
               width={pieceSize}
