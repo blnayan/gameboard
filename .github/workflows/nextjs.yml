@@ -34,7 +34,7 @@ jobs:
       - name: Add BASE_PATH
         run: |
           touch .env
-          echo BASE_PATH=/gameboard >> .env
+          echo NEXT_PUBLIC_BASE_PATH=/gameboard >> .env
       - name: Detect package manager
         id: detect-package-manager
         run: |

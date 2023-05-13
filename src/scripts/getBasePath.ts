@@ -1,5 +1,3 @@
-import getConfig from "next/config";
-
 export function getBasePath() {
-  return getConfig().publicRuntimeConfig.basePath as string;
+  return process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 }
