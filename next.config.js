@@ -4,7 +4,6 @@ const nextConfig = {
   reactStrictMode: true,
   trailingSlash: true,
   basePath: process.env.GITHUB ? "/gameboard" : undefined,
-  assetPrefix: process.env.GITHUB ? "/gameboard/" : undefined,
   experimental: {
     appDir: true,
   },
