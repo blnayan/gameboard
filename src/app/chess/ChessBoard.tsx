@@ -10,7 +10,7 @@ export interface BoardState {
   boardStyle: "brown" | "green" | "red";
   pieceStyle: "alpha" | "cburnett";
   pieces: PieceTrackData[];
-  checkMate: boolean;
+  gameOverStatus?: "draw" | "checkmate";
 }
 
 export function ChessBoard() {
@@ -21,10 +21,9 @@ export function ChessBoard() {
     boardStyle: "brown",
     pieceStyle: "cburnett",
     pieces: [],
-    checkMate: false,
   });
 
-  const { boardSize, boardStyle, pieceStyle, pieces, checkMate } = boardState;
+  const { boardSize, boardStyle, pieceStyle, pieces, gameOverStatus } = boardState;
 
   const renderPieces = useCallback(() => {
     return pieces.map(({ piece, square }) => {
@@ -32,6 +31,7 @@ export function ChessBoard() {
         <Piece
           piece={piece}
           square={square}
+          gameOverStatus={gameOverStatus}
           chess={chess}
           pieceSize={boardSize / 8}
           pieceStyle={pieceStyle}
@@ -39,18 +39,26 @@ export function ChessBoard() {
         />
       );
     });
-  }, [chess, pieceStyle, pieces, boardSize]);
+  }, [chess, pieceStyle, pieces, boardSize, gameOverStatus]);
 
   const handlePiecesUpdate = useCallback(
     (pieces: PieceTrackData[]) => {
       chess.logBoard();
-      setBoardState((prevState) => ({ ...prevState, pieces, checkMate: chess.isCheckmate() }));
+      setBoardState((prevState) => ({
+        ...prevState,
+        pieces,
+        gameOverStatus: chess.isDraw() ? "draw" : chess.isCheckmate() ? "checkmate" : undefined,
+      }));
     },
     [chess]
   );
 
   useEffect(() => {
-    setBoardState((prevState) => ({ ...prevState, pieces: chess.pieces() }));
+    setBoardState((prevState) => ({
+      ...prevState,
+      pieces: chess.pieces(),
+      gameOverStatus: chess.isDraw() ? "draw" : chess.isCheckmate() ? "checkmate" : undefined,
+    }));
     chess.removeListener("piecesUpdate", handlePiecesUpdate);
     chess.on("piecesUpdate", handlePiecesUpdate);
   }, [chess, handlePiecesUpdate]);
@@ -69,7 +77,7 @@ export function ChessBoard() {
         />
         {renderPieces()}
       </div>
-      {checkMate ? <p>Check Mate!</p> : false}
+      <p>{gameOverStatus ?? null}</p>
     </>
   );
 }

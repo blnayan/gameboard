@@ -656,6 +656,34 @@ export class Chess extends EventEmitter {
     return this.isCheck() && this.generateLegalMoves().length === 0;
   }
 
+  public isStalemate() {
+    return !this.isCheck() && this.generateLegalMoves().length === 0;
+  }
+
+  public isDraw() {
+    const pieces = this._pieces.map(({ piece }) => piece);
+    const stalemate = this.isStalemate();
+
+    if (stalemate) return true;
+
+    if (pieces.length > 4) return false;
+
+    // draw if king vs king
+    if (pieces.length === 2) return true;
+
+    // draw if both side has bishop as the last piece remaining
+    if (pieces.includes(PieceFlags.White | PieceFlags.Bishop) && pieces.includes(PieceFlags.Black | PieceFlags.Bishop))
+      return true;
+
+    if (pieces.length > 3) return false;
+
+    // draw if the last piece on either side is bishop or a knight
+    if (pieces.find((piece) => isPieceType(piece, PieceFlags.Bishop) || isPieceType(piece, PieceFlags.Knight)))
+      return true;
+
+    return false;
+  }
+
   private _undoMove() {
     const old = this._history.pop();
 

@@ -24,6 +24,7 @@ import { getBasePath } from "@/scripts";
 export interface PieceProps {
   piece: number;
   square: number;
+  gameOverStatus: BoardState["gameOverStatus"];
   chess: Chess;
   pieceSize: number;
   pieceStyle: BoardState["pieceStyle"];
@@ -43,7 +44,7 @@ export interface PieceState {
   promotionSquare: number | null;
 }
 
-export function Piece({ piece, square, chess, pieceSize, pieceStyle }: PieceProps) {
+export function Piece({ piece, square, chess, pieceSize, pieceStyle, gameOverStatus }: PieceProps) {
   const [dragState, setDragState] = useState<DragState>({
     translate: { x: 0, y: 0 },
     scroll: { x: 0, y: 0 },
@@ -123,6 +124,7 @@ export function Piece({ piece, square, chess, pieceSize, pieceStyle }: PieceProp
 
     if (event.button !== 0) return;
     if (!isPieceColor(piece, chess.turn)) return;
+    if (gameOverStatus) return;
 
     addDraggingListeners();
 
