@@ -1,0 +1,12 @@
+:root {
+  --darkNavy: #27374d;
+  --navy: #526d82;
+  --lightNavy: #9db2bf;
+  --whiteNavy: #dde6ed;
+}
+
+body {
+  margin: 0;
+  background-color: var(--darkNavy);
+  background-repeat: no-repeat;
+}

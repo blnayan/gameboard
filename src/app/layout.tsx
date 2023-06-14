@@ -1,8 +1,9 @@
 import Link from "next/link";
 import "./globals.css";
-import { Inter } from "next/font/google";
+import { Lexend_Deca } from "next/font/google";
+import NavBar from "./NavBar";
 
-const inter = Inter({ subsets: ["latin"] });
+const lexendDeca = Lexend_Deca({ subsets: ["latin"] });
 
 export const metadata = {
   title: "Game Board",
@@ -12,9 +13,8 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <Link href="/">Home</Link>
-        <Link href="/chess">Chess</Link>
+      <body className={lexendDeca.className}>
+        <NavBar />
         {children}
       </body>
     </html>

@@ -1,0 +1,35 @@
+.header {
+  height: 3rem;
+  width: 100%;
+  font-size: 1rem;
+}
+
+.navBar {
+  margin-left: 10rem;
+  margin-right: 10rem;
+}
+
+.linksContainer {
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  column-gap: 2rem;
+}
+
+.linkBox {
+  height: 3rem;
+  width: 4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.linkBox.active {
+  background-color: var(--lightNavy) 50%;
+}
+
+.link {
+  text-decoration: none;
+  font-weight: 600;
+  color: var(--whiteNavy);
+}
