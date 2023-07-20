@@ -17,7 +17,7 @@ export function ChessBoard() {
   // "7k/P7/8/8/8/8/p7/7K w - - 0 1"
   const [chess] = useState(new Chess());
   const [boardState, setBoardState] = useState<BoardState>({
-    boardSize: 600,
+    boardSize: 500,
     boardStyle: "brown",
     pieceStyle: "cburnett",
     pieces: [],
@@ -77,7 +77,6 @@ export function ChessBoard() {
         />
         {renderPieces()}
       </div>
-      <p>{gameOverStatus ?? null}</p>
     </>
   );
 }

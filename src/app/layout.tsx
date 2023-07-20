@@ -14,8 +14,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className={lexendDeca.className}>
-        <NavBar />
-        {children}
+        <header>
+          <NavBar />
+        </header>
+        <main>{children}</main>
       </body>
     </html>
   );

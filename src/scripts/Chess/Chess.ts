@@ -10,7 +10,6 @@ import {
   isPieceColor,
   isValidPromotionPiece,
   isPieceType,
-  PieceTypeFlags,
   PromotionPieceTypeFlags,
 } from "./Piece";
 

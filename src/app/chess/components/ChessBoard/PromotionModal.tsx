@@ -3,7 +3,7 @@ import styles from "./PromotionModal.module.css";
 import { PieceState } from "./Piece";
 import Image from "next/image";
 import { BoardState } from "./ChessBoard";
-import { getPieceName, getPieceSymbol, isPieceType } from "../../scripts/Chess/Piece";
+import { getPieceName, getPieceSymbol, isPieceType } from "@/scripts/Chess/Piece";
 import { useEffect, useRef } from "react";
 import { getBasePath } from "@/scripts";
 

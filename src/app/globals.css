@@ -1,12 +1,21 @@
 :root {
-  --darkNavy: #27374d;
-  --navy: #526d82;
-  --lightNavy: #9db2bf;
-  --whiteNavy: #dde6ed;
+  --text: #fbfbfa;
+  --background: #1a2025;
+  --primary: #fbfbfa;
+  --secondary: #3a3c44;
+  --accent: #d69b9b;
 }
 
 body {
-  margin: 0;
-  background-color: var(--darkNavy);
+  margin: 0 5rem 0;
+  background-color: var(--background);
   background-repeat: no-repeat;
+  color: var(--text);
+  user-select: none;
+}
+
+@media screen and (max-width: 1100px) {
+  body {
+    margin: 0;
+  }
 }

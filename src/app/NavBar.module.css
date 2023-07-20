@@ -1,35 +1,28 @@
-.header {
-  height: 3rem;
-  width: 100%;
-  font-size: 1rem;
-}
-
-.navBar {
-  margin-left: 10rem;
-  margin-right: 10rem;
-}
-
-.linksContainer {
-  height: 3rem;
+.nav {
+  margin-left: 1.5rem;
+  margin-right: 1.5rem;
+  height: 5rem;
   display: flex;
   align-items: center;
-  column-gap: 2rem;
-}
-
-.linkBox {
-  height: 3rem;
-  width: 4rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.linkBox.active {
-  background-color: var(--lightNavy) 50%;
+  column-gap: 1rem;
 }
 
 .link {
   text-decoration: none;
-  font-weight: 600;
-  color: var(--whiteNavy);
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--text);
+  padding: 0.5rem;
+  border-radius: 5px;
+}
+
+.link.active {
+  color: var(--background);
+  background-color: var(--primary);
+}
+
+@media screen and (max-width: 1100px) {
+  .nav {
+    justify-content: center;
+  }
 }

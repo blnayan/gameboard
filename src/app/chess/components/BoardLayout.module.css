@@ -1,0 +1,45 @@
+.boardContainer {
+  width: fit-content;
+  margin: auto;
+  display: flex;
+  position: relative;
+  flex-direction: row;
+  gap: 3rem;
+  justify-content: center;
+}
+
+.boardLayout {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.boardSidebar {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--secondary);
+  width: 400px;
+  height: unset;
+  border-radius: 5px;
+}
+
+.sidebarTitle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+@media screen and (max-width: 1100px) {
+  .boardContainer {
+    flex-direction: column;
+    gap: 1rem;
+    justify-content: unset;
+    align-items: center;
+  }
+
+  .boardSidebar {
+    height: 300px;
+    width: 100%;
+  }
+}

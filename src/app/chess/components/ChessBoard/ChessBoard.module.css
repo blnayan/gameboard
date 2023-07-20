@@ -1,7 +1,7 @@
 .board {
   position: relative;
   background-size: 100%;
-  margin-left: 10rem;
+  user-select: none;
 }
 
 .boardImage {

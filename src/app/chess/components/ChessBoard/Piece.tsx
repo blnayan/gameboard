@@ -31,8 +31,14 @@ export interface PieceProps {
 }
 
 export interface DragState {
-  translate: { x: number; y: number };
-  scroll: { x: number; y: number };
+  translateX: number;
+  translateY: number;
+  clientX: number;
+  clientY: number;
+  clientWidth: number;
+  clientHeight: number;
+  scrollX: number;
+  scrollY: number;
   dragging: boolean;
   moved: boolean;
 }
@@ -46,13 +52,19 @@ export interface PieceState {
 
 export function Piece({ piece, square, chess, pieceSize, pieceStyle, gameOverStatus }: PieceProps) {
   const [dragState, setDragState] = useState<DragState>({
-    translate: { x: 0, y: 0 },
-    scroll: { x: 0, y: 0 },
+    translateX: 0,
+    translateY: 0,
+    clientX: 0,
+    clientY: 0,
+    clientWidth: 0,
+    clientHeight: 0,
+    scrollX: 0,
+    scrollY: 0,
     dragging: false,
     moved: false,
   });
 
-  const { translate, dragging, moved } = dragState;
+  const { translateX, translateY, dragging, moved } = dragState;
 
   const [pieceState, setPieceState] = useState<PieceState>({
     legalMoves: [],
@@ -66,8 +78,8 @@ export function Piece({ piece, square, chess, pieceSize, pieceStyle, gameOverSta
   const movedEffect = useCallback(() => {
     if (!moved) return;
 
-    const toFile = file(square) + Math.round(translate.x / pieceSize);
-    const toRank = rank(square) + Math.round(translate.y / pieceSize);
+    const toFile = file(square) + Math.round(translateX / pieceSize);
+    const toRank = rank(square) + Math.round(translateY / pieceSize);
     const toSquare = toRank * 16 + toFile;
 
     if (!isValidSquare(toSquare) || square === toSquare) return resetDragState();
@@ -84,7 +96,7 @@ export function Piece({ piece, square, chess, pieceSize, pieceStyle, gameOverSta
     } catch {
       return resetDragState();
     }
-  }, [moved, square, legalMoves, translate, pieceSize, piece, promotionPiece, chess]);
+  }, [moved, square, legalMoves, translateX, translateY, pieceSize, piece, promotionPiece, chess]);
 
   const promotionEffect = useCallback(() => {
     if (!promotionPiece || promotionSquare === null) return;
@@ -98,8 +110,14 @@ export function Piece({ piece, square, chess, pieceSize, pieceStyle, gameOverSta
 
   function resetDragState() {
     setDragState({
-      translate: { x: 0, y: 0 },
-      scroll: { x: 0, y: 0 },
+      translateX: 0,
+      translateY: 0,
+      clientX: 0,
+      clientY: 0,
+      clientWidth: 0,
+      clientHeight: 0,
+      scrollX: 0,
+      scrollY: 0,
       dragging: false,
       moved: false,
     });
@@ -128,15 +146,16 @@ export function Piece({ piece, square, chess, pieceSize, pieceStyle, gameOverSta
 
     addDraggingListeners();
 
-    const { scrollX, scrollY } = window;
-
     setDragState((prevState) => ({
       ...prevState,
-      translate: {
-        x: event.nativeEvent.offsetX - pieceSize / 2 + prevState.translate.x,
-        y: event.nativeEvent.offsetY - pieceSize / 2 + prevState.translate.y,
-      },
-      scroll: { x: scrollX, y: scrollY },
+      translateX: event.nativeEvent.offsetX - pieceSize / 2 + prevState.translateX,
+      translateY: event.nativeEvent.offsetY - pieceSize / 2 + prevState.translateY,
+      clientX: event.clientX,
+      clientY: event.clientY,
+      clientWidth: document.documentElement.clientWidth,
+      clientHeight: document.documentElement.clientHeight,
+      scrollX: window.scrollX,
+      scrollY: window.scrollY,
       dragging: true,
     }));
 
@@ -149,9 +168,23 @@ export function Piece({ piece, square, chess, pieceSize, pieceStyle, gameOverSta
   function handleMouseMove(event: MouseEvent) {
     event.preventDefault();
 
+    const { clientX, clientY } = event;
+    const { clientWidth, clientHeight } = document.documentElement;
+
     setDragState((prevState) => ({
       ...prevState,
-      translate: { x: prevState.translate.x + event.movementX, y: prevState.translate.y + event.movementY },
+      translateX:
+        clientX -
+        prevState.clientX -
+        (clientWidth - prevState.clientWidth) / 2 -
+        (prevState.clientWidth > 1100 && clientWidth <= 1100 ? 224 : 0) +
+        (prevState.clientWidth <= 1100 && clientWidth > 1100 ? 224 : 0) +
+        prevState.translateX,
+      translateY: clientY - prevState.clientY + prevState.translateY,
+      clientX,
+      clientY,
+      clientWidth,
+      clientHeight,
     }));
   }
 
@@ -172,11 +205,10 @@ export function Piece({ piece, square, chess, pieceSize, pieceStyle, gameOverSta
     const { scrollX, scrollY } = window;
     setDragState((prevState) => ({
       ...prevState,
-      translate: {
-        x: scrollX - prevState.scroll.x + prevState.translate.x,
-        y: scrollY - prevState.scroll.y + prevState.translate.y,
-      },
-      scroll: { x: scrollX, y: scrollY },
+      translateX: scrollX - prevState.scrollX + prevState.translateX,
+      translateY: scrollY - prevState.scrollY + prevState.translateY,
+      scrollX,
+      scrollY,
     }));
   }
 
@@ -192,7 +224,7 @@ export function Piece({ piece, square, chess, pieceSize, pieceStyle, gameOverSta
         style={{
           height: pieceSize,
           width: pieceSize,
-          transform: `translate(${translate.x}px, ${translate.y}px)`,
+          transform: `translate(${translateX}px, ${translateY}px)`,
         }}
         // prettier-ignore
         className={[

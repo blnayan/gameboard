@@ -1,7 +1,8 @@
 "use client";
 
-import { ChessBoard } from "./ChessBoard";
+import { BoardLayout } from "./components/BoardLayout";
+import styles from "./page.module.css";
 
 export default function Chess() {
-  return <ChessBoard />;
+  return <BoardLayout />;
 }
