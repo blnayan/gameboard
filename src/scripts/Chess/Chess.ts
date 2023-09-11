@@ -410,6 +410,7 @@ export class Chess extends EventEmitter {
       PieceFlags.Queen,
     ];
 
+    // goes through the possible offset of a pawn
     for (let i = 0, length = offsets.length; i < length; i++) {
       const r = rank(square);
 
@@ -586,6 +587,7 @@ export class Chess extends EventEmitter {
     return moves;
   }
 
+  // generates all legal moves
   public generateLegalMoves(square?: number): Move[] {
     const friendlyColor = this._turn;
     const pseudoLegalMoves = this._generateMoves(square);
@@ -600,6 +602,7 @@ export class Chess extends EventEmitter {
     return legalMoves;
   }
 
+  // checks to see if a specific square and piece is attacked
   private _attacked(square: number, piece: number) {
     let count = 0;
     for (const { piece: fromPiece, square: fromSquare } of this._pieces) {
@@ -637,6 +640,7 @@ export class Chess extends EventEmitter {
     return false;
   }
 
+  // checks to see if the king is being attacked or checked
   private _isKingAttacked(color: PieceColorFlags) {
     const king = this._pieces.find(
       (data) => isPieceType(data.piece, PieceFlags.King) && isPieceColor(data.piece, color)
@@ -647,18 +651,22 @@ export class Chess extends EventEmitter {
     return this._attacked(king.square, king.piece);
   }
 
+  // checks if the game is on a check
   public isCheck() {
     return this._isKingAttacked(this._turn);
   }
 
+  // checks if the game is a checkmate
   public isCheckmate() {
     return this.isCheck() && this.generateLegalMoves().length === 0;
   }
 
+  // checks if the game is a stalemate
   public isStalemate() {
     return !this.isCheck() && this.generateLegalMoves().length === 0;
   }
 
+  // checks if the game is a draw
   public isDraw() {
     const pieces = this._pieces.map(({ piece }) => piece);
     const stalemate = this.isStalemate();
@@ -683,6 +691,7 @@ export class Chess extends EventEmitter {
     return false;
   }
 
+  // goes back one move logically using move history
   private _undoMove() {
     const old = this._history.pop();
 
@@ -725,6 +734,7 @@ export class Chess extends EventEmitter {
     return move;
   }
 
+  // logically makes a chess move
   private _makeMove(move: Move) {
     const { color, from, to, piece, promotion, captured, flags } = move;
     const enemyColor = swapColor(color);
@@ -804,26 +814,34 @@ export class Chess extends EventEmitter {
     this._turn = enemyColor;
   }
 
+  // safely moves the pieces
   public move({ from, to, promotion }: MakeMoveData) {
+    // makes sure from and to square aren't outside the board using 0x88 method
     if (!isValidSquare(from)) throw new Error("Invalid from Square");
     if (!isValidSquare(to)) throw new Error("Invalid to Square");
+
+    // ensure if promotion it's a valid piece
     if (promotion && !isValidPromotionPiece(promotion)) throw new Error("Invalid Promotion Piece");
 
+    // generates legal move to check if the move trying to be made is legal or not
     const legalMove = this.generateLegalMoves(from).find(
       (move) => move.from === from && move.to === to && move.promotion === promotion
     );
 
     if (!legalMove) throw Error("This an Illegal Move");
 
+    // after checking the validility of the move makes the move
     this._makeMove(legalMove);
     this.emit("piecesUpdate", this.pieces());
     this.emit("boardUpdate", [...this._board]);
     this.emit("moveMade", legalMove);
 
+    // returns a the made legal move
     return legalMove;
   }
 }
 
+// interface for the event name and corrosponding data required
 export interface ChessEvents {
   pieceAdd: [data: PieceTrackData];
   pieceRemove: [data: PieceTrackData];
@@ -832,6 +850,7 @@ export interface ChessEvents {
   piecesUpdate: [pieces: PieceTrackData[]];
 }
 
+// Chess event listener types
 export declare interface Chess {
   on<K extends keyof ChessEvents>(event: K, listener: (...args: ChessEvents[K]) => Awaitable<void>): this;
   on<S extends string | symbol>(
