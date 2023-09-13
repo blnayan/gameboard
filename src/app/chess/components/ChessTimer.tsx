@@ -33,5 +33,6 @@ export function ChessTimer({ chess, color }: ChessTimerProps) {
     chess.on("moveMade", handleMoveMade);
   }, [chess, handleMoveMade]);
 
-  return <>{moment(new Date(milliseconds)).format("mm:ss.S")}</>;
+  // TODO: find out if moment js is faster than using native Date constructor
+  return <>{moment(milliseconds).format("mm:ss.S")}</>;
 }

@@ -115,8 +115,8 @@ export function Piece({ piece, square, chess, pieceSize, pieceStyle, gameOverSta
     if (!promotionPiece || promotionSquare === null) return;
 
     // if the move fails for any reason reset the pieceState
-    // note that this is never supposed to fail and if it does ever occur that means there is something wrong with the move logic or code
-    // this is just used to make sure the UI looks ok even if the backend logic goes crazy for any unintended state
+    // * note that this is never supposed to fail and if it does ever occur that means there is something wrong with the move logic or code
+    // * this is just used to make sure the UI looks ok even if the backend logic has errors for any unintended state of the game
     try {
       chess.move({ from: square, to: promotionSquare, promotion: promotionPiece });
     } catch {
