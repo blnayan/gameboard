@@ -1,5 +1,5 @@
 // represented as 8 bits the last 6 represent piece type and first 2 represent piece color
-// the reason i used each binary digit to represent a type of piece is to include type safety
+// the reason for using each binary digit to represent a type of piece is to include type safety
 // for example if it were 3 bits for type 0b011 represented by 2 Piece types using OR bitwise operator
 // with using 6 bits you are safe from that since to represent a piece type you can only have one 1 digit set to 1 everything else has to be false
 // this makes it so that when you use OR bitwise operator only color and piece type can be used as operands

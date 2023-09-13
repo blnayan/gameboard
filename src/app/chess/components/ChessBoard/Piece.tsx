@@ -1,5 +1,6 @@
 import {
   Chess,
+  ChessErrorCodes,
   Move,
   PieceFlags,
   PieceSymbol,
@@ -76,31 +77,51 @@ export function Piece({ piece, square, chess, pieceSize, pieceStyle, gameOverSta
   const { legalMoves, promotionPiece, promoting, promotionSquare } = pieceState;
 
   const movedEffect = useCallback(() => {
+    // makes sure this callback only activates once a piece has been moved
     if (!moved) return;
 
+    // calculates the square (0x88 notation) the piece landed on after the dragging is over
     const toFile = file(square) + Math.round(translateX / pieceSize);
     const toRank = rank(square) + Math.round(translateY / pieceSize);
     const toSquare = toRank * 16 + toFile;
 
-    if (!isValidSquare(toSquare) || square === toSquare) return resetDragState();
+    // // makes sure the piece isn't dropped outside the board or is on the same square from previous, if not reset the dragState
+    // if (!isValidSquare(toSquare) || square === toSquare) return resetDragState();
 
-    if (!legalMoves.find((move) => move.from === square && move.to === toSquare)) return resetDragState();
+    // // makes sure the move is a legal move, if not reset the dragState
+    // if (!legalMoves.find((move) => move.from === square && move.to === toSquare)) return resetDragState();
 
+    // if it's a pawn and the move is on a promotion square then note the toSquare to pieceState and reset the dragState for promotionModal to select promotionPiece and exit function
     if (isPromotionSquare(toSquare) && isPieceType(piece, PieceFlags.Pawn) && !promotionPiece) {
       setPieceState((prevState) => ({ ...prevState, promoting: true, promotionSquare: toSquare }));
       return resetDragState();
     }
 
+    // TODO: more specific error handling
+    // if the move fails for any reason reset the dragState
     try {
       chess.move({ from: square, to: toSquare });
-    } catch {
+    } catch (err) {
+      // // make sure it's a Error constructor obj
+      // if (!(err instanceof Error)) return resetDragState();
+
+      // return to original dragState because of error
       return resetDragState();
     }
-  }, [moved, square, legalMoves, translateX, translateY, pieceSize, piece, promotionPiece, chess]);
+  }, [moved, square, translateX, pieceSize, translateY, piece, promotionPiece, chess]);
 
   const promotionEffect = useCallback(() => {
+    // make sure promotionPiece and promotionSquare both exist before making a promotion move
     if (!promotionPiece || promotionSquare === null) return;
-    chess.move({ from: square, to: promotionSquare, promotion: promotionPiece });
+
+    // if the move fails for any reason reset the pieceState
+    // note that this is never supposed to fail and if it does ever occur that means there is something wrong with the move logic or code
+    // this is just used to make sure the UI looks ok even if the backend logic goes crazy for any unintended state
+    try {
+      chess.move({ from: square, to: promotionSquare, promotion: promotionPiece });
+    } catch {
+      return resetPieceState();
+    }
   }, [promotionPiece, promotionSquare, chess, square]);
 
   useEffect(() => {
@@ -123,6 +144,16 @@ export function Piece({ piece, square, chess, pieceSize, pieceStyle, gameOverSta
     });
   }
 
+  function resetPieceState() {
+    setPieceState({
+      legalMoves: [],
+      promotionPiece: null,
+      promoting: false,
+      promotionSquare: null,
+    });
+  }
+
+  // adds the necessary listeners for handling dragging logic
   function addDraggingListeners() {
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseup", handleMouseUp);
@@ -140,14 +171,16 @@ export function Piece({ piece, square, chess, pieceSize, pieceStyle, gameOverSta
   function handleMouseDown(event: React.MouseEvent<HTMLDivElement>) {
     event.preventDefault();
 
-    if (event.button !== 0) return;
-    if (!isPieceColor(piece, chess.turn)) return;
-    if (gameOverStatus) return;
+    // only left click is allowed
+    // makes sure piece color matches the turn color
+    // if the game is over don't allow any piece movement
+    if (event.button !== 0 || !isPieceColor(piece, chess.turn) || gameOverStatus) return;
 
     addDraggingListeners();
 
     setDragState((prevState) => ({
       ...prevState,
+      // "event.nativeEvent.offset(X/Y) - pieceSize / 2" makes sure the piece element is centered with the cursor
       translateX: event.nativeEvent.offsetX - pieceSize / 2 + prevState.translateX,
       translateY: event.nativeEvent.offsetY - pieceSize / 2 + prevState.translateY,
       clientX: event.clientX,
@@ -172,12 +205,16 @@ export function Piece({ piece, square, chess, pieceSize, pieceStyle, gameOverSta
     const { clientWidth, clientHeight } = document.documentElement;
 
     setDragState((prevState) => ({
+      // "clientY - prevState.clientY" and "clientX - prevState.clientX" calculates the movement in px between the previous and current call back of mousemove event and adds it to the respective translate props
       ...prevState,
       translateX:
         clientX -
         prevState.clientX -
+        // makes sure the translation is changed properly when the document clientWidth changes
         (clientWidth - prevState.clientWidth) / 2 -
+        // makes sure when the document clientWidth changes to less than or equal to 1100px subtract 224px to offset the UI changes using media queries on translateX
         (prevState.clientWidth > 1100 && clientWidth <= 1100 ? 224 : 0) +
+        // makes sure when the document clientWidth changes to more than or equal to 1100px add 224px to offset the UI changes using media queries on translateX
         (prevState.clientWidth <= 1100 && clientWidth > 1100 ? 224 : 0) +
         prevState.translateX,
       translateY: clientY - prevState.clientY + prevState.translateY,
@@ -188,6 +225,7 @@ export function Piece({ piece, square, chess, pieceSize, pieceStyle, gameOverSta
     }));
   }
 
+  // ends dragging logic
   function handleMouseUp(event: MouseEvent) {
     event.preventDefault();
     removeDraggingListeners();
@@ -201,9 +239,11 @@ export function Piece({ piece, square, chess, pieceSize, pieceStyle, gameOverSta
     });
   }
 
+  // handles offsets related to scroll
   function handleScroll() {
     const { scrollX, scrollY } = window;
     setDragState((prevState) => ({
+      // "scrollX - prevState.scrollX" and "scrollY - prevState.scrollY" calcualtes the movement in px between previous scroll and current scroll and adds the difference to the respective translate props
       ...prevState,
       translateX: scrollX - prevState.scrollX + prevState.translateX,
       translateY: scrollY - prevState.scrollY + prevState.translateY,
@@ -212,6 +252,7 @@ export function Piece({ piece, square, chess, pieceSize, pieceStyle, gameOverSta
     }));
   }
 
+  // resets the piece position if window goes out of focus for example switching to another window or switching to another desktop app
   function handleBlur(event: FocusEvent) {
     event.preventDefault();
     removeDraggingListeners();

@@ -13,11 +13,13 @@ export interface BoardState {
   gameOverStatus?: "draw" | "checkmate";
 }
 
-export function ChessBoard() {
-  // "7k/P7/8/8/8/8/p7/7K w - - 0 1"
-  const [chess] = useState(new Chess());
+export interface ChessBoardProps {
+  chess: Chess;
+}
+
+export function ChessBoard({ chess }: ChessBoardProps) {
   const [boardState, setBoardState] = useState<BoardState>({
-    boardSize: 500,
+    boardSize: 600,
     boardStyle: "brown",
     pieceStyle: "cburnett",
     pieces: [],
@@ -25,6 +27,7 @@ export function ChessBoard() {
 
   const { boardSize, boardStyle, pieceStyle, pieces, gameOverStatus } = boardState;
 
+  // renders the pieces dynamically
   const renderPieces = useCallback(() => {
     return pieces.map(({ piece, square }) => {
       return (

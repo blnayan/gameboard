@@ -13,6 +13,14 @@ import {
   PromotionPieceTypeFlags,
 } from "./Piece";
 
+export enum ChessErrorCodes {
+  InvalidFromSquare = "InvalidFromSquare",
+  InvalidToSquare = "InvalidToSquare",
+  OutOfRangeSquare = "OutOfRangeSquare",
+  IllegalMove = "IllegalMove",
+  InvalidPromotionPiece = "InvalidPromotionPiece"
+}
+
 export type Awaitable<T> = PromiseLike<T> | T;
 
 export type Square = `${"a" | "b" | "c" | "d" | "e" | "f" | "g" | "h"}${1 | 2 | 3 | 4 | 5 | 6 | 7 | 8}`;
@@ -814,21 +822,22 @@ export class Chess extends EventEmitter {
     this._turn = enemyColor;
   }
 
+  // TODO: refine error throwing
   // safely moves the pieces
-  public move({ from, to, promotion }: MakeMoveData) {
+  public move({ from, to, promotion }: MakeMoveData): Move | never {
     // makes sure from and to square aren't outside the board using 0x88 method
-    if (!isValidSquare(from)) throw new Error("Invalid from Square");
-    if (!isValidSquare(to)) throw new Error("Invalid to Square");
-
-    // ensure if promotion it's a valid piece
-    if (promotion && !isValidPromotionPiece(promotion)) throw new Error("Invalid Promotion Piece");
+    if (!isValidSquare(from)) throw new Error(ChessErrorCodes.InvalidFromSquare);
+    if (!isValidSquare(to)) throw new Error(ChessErrorCodes.InvalidToSquare);
 
     // generates legal move to check if the move trying to be made is legal or not
     const legalMove = this.generateLegalMoves(from).find(
       (move) => move.from === from && move.to === to && move.promotion === promotion
     );
 
-    if (!legalMove) throw Error("This an Illegal Move");
+    if (!legalMove) throw Error(ChessErrorCodes.IllegalMove);
+
+    // ensure if promotion it's a valid piece
+    if (promotion && !isValidPromotionPiece(promotion)) throw new Error(ChessErrorCodes.InvalidPromotionPiece);
 
     // after checking the validility of the move makes the move
     this._makeMove(legalMove);
