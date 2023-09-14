@@ -17,8 +17,9 @@ export enum ChessErrorCodes {
   InvalidFromSquare = "InvalidFromSquare",
   InvalidToSquare = "InvalidToSquare",
   OutOfRangeSquare = "OutOfRangeSquare",
+  UndefinedPromotionForPromotionMove = "UndefinedPromotionForPromotionMove",
   IllegalMove = "IllegalMove",
-  InvalidPromotionPiece = "InvalidPromotionPiece"
+  InvalidPromotionPiece = "InvalidPromotionPiece",
 }
 
 export type Awaitable<T> = PromiseLike<T> | T;
@@ -171,15 +172,21 @@ export function swapColor(color: PieceColorFlags): Color {
 }
 
 export class Chess extends EventEmitter {
+  /** `_board`: 128-length array storing the pieces using 0x88 method */
   private readonly _board = new Array<number>(128);
+  /** `_pieces`: keeps track of individual pieces in array with the square that it's on */
   private readonly _pieces: PieceTrackData[] = [];
+  /** `_turn`: keeps track of who's turn it is White or Black */
   private _turn: Color = PieceFlags.White;
+  /** `_castling`: keeps a bitfield of castling still available in White and Black sides */
   private _castling: Record<Color, number> = { [PieceFlags.White]: 0, [PieceFlags.Black]: 0 };
+  /** `_epSquare`: shows which square is en-passant is available on */
   private _epSquare: number | null = null;
   /** `_halfMoves`: counts everytime each side moves and resets on pawn advances or captures */
   private _halfMoves: number = 0;
   /** `_fullMoves`: counts after black moves */
   private _fullMoves: number = 0;
+  /** `_history`: keeps a list of moves made */
   private _history: MoveHistory[] = [];
 
   constructor(fen = DEFAULT_FEN) {

@@ -85,11 +85,11 @@ export function Piece({ piece, square, chess, pieceSize, pieceStyle, gameOverSta
     const toRank = rank(square) + Math.round(translateY / pieceSize);
     const toSquare = toRank * 16 + toFile;
 
-    // // makes sure the piece isn't dropped outside the board or is on the same square from previous, if not reset the dragState
-    // if (!isValidSquare(toSquare) || square === toSquare) return resetDragState();
+    // makes sure the piece isn't dropped outside the board or is on the same square from previous, if not reset the dragState
+    if (!isValidSquare(toSquare) || square === toSquare) return resetDragState();
 
-    // // makes sure the move is a legal move, if not reset the dragState
-    // if (!legalMoves.find((move) => move.from === square && move.to === toSquare)) return resetDragState();
+    // makes sure the move is a legal move, if not reset the dragState
+    if (!legalMoves.find((move) => move.from === square && move.to === toSquare)) return resetDragState();
 
     // if it's a pawn and the move is on a promotion square then note the toSquare to pieceState and reset the dragState for promotionModal to select promotionPiece and exit function
     if (isPromotionSquare(toSquare) && isPieceType(piece, PieceFlags.Pawn) && !promotionPiece) {
@@ -97,15 +97,12 @@ export function Piece({ piece, square, chess, pieceSize, pieceStyle, gameOverSta
       return resetDragState();
     }
 
-    // TODO: more specific error handling
     // if the move fails for any reason reset the dragState
+    // * note that this is never supposed to fail, if it does ever fail then there is something wrong with the prechecks and/or move logic
+    // * this is just used to make sure the UI looks ok even if the backend logic has errors for any unintended state of the game
     try {
       chess.move({ from: square, to: toSquare });
-    } catch (err) {
-      // // make sure it's a Error constructor obj
-      // if (!(err instanceof Error)) return resetDragState();
-
-      // return to original dragState because of error
+    } catch {
       return resetDragState();
     }
   }, [moved, square, translateX, pieceSize, translateY, piece, promotionPiece, chess]);
@@ -115,7 +112,7 @@ export function Piece({ piece, square, chess, pieceSize, pieceStyle, gameOverSta
     if (!promotionPiece || promotionSquare === null) return;
 
     // if the move fails for any reason reset the pieceState
-    // * note that this is never supposed to fail and if it does ever occur that means there is something wrong with the move logic or code
+    // * note that this is never supposed to fail, if it does ever fail then there is something wrong with the prechecks and/or move logic
     // * this is just used to make sure the UI looks ok even if the backend logic has errors for any unintended state of the game
     try {
       chess.move({ from: square, to: promotionSquare, promotion: promotionPiece });
