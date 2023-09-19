@@ -105,7 +105,7 @@ export function Piece({ piece, square, chess, pieceSize, pieceStyle, gameOverSta
     } catch {
       return resetDragState();
     }
-  }, [moved, square, translateX, pieceSize, translateY, piece, promotionPiece, chess]);
+  }, [moved, square, translateX, pieceSize, translateY, legalMoves, piece, promotionPiece, chess]);
 
   const promotionEffect = useCallback(() => {
     // make sure promotionPiece and promotionSquare both exist before making a promotion move

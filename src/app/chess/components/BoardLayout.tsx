@@ -6,7 +6,7 @@ import { Chess, PieceFlags } from "@/scripts/Chess";
 
 export function BoardLayout() {
   // "7k/PR6/8/8/8/8/pr6/7K w - - 0 1"
-  const [chess] = useState(new Chess("7k/PR6/8/8/8/8/pr6/7K w - - 0 1"));
+  const [chess] = useState(new Chess());
 
   return (
     <div className={styles.boardContainer}>
